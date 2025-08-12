@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${student.name} + '的成绩'"></title>
+    <style> /* 类似 list 页面的样式 */ </style>
+</head>
+<body>
+<h1 th:text="${student.name} + ' (学号: ' + ${student.studentNumber} + ') 的所有课程成绩'"></h1>
+<p><a th:href="@{/students}">返回学生列表</a> | <a th:href="@{/scores}">返回成绩列表</a></p>
+<table>
+    <thead>
+    <tr>
+        <th>课程编号</th>
+        <th>课程名称</th>
+        <th>学分</th>
+        <th>成绩</th>
+        <th>学期</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="score : ${scores}">
+        <td th:text="${score.course?.courseNumber}"></td>
+        <td th:text="${score.course?.name}"></td>
+        <td th:text="${score.course?.credits}"></td>
+        <td th:text="${score.grade}"></td>
+        <td th:text="${score.semester}"></td>
+        <td>
+            <a th:href="@{/scores/manage(studentId=${score.studentId}, courseId=${score.courseId})}">编辑成绩</a>
+        </td>
+    </tr>
+    <tr th:if="${scores == null or scores.isEmpty()}">
+        <td colspan="6" style="text-align: center;">暂无成绩数据</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

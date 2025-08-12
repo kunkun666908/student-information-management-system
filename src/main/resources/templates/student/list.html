@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- <--- 添加这一行 -->
+  <title>学生列表</title>
+  <style>
+    table { border-collapse: collapse; width: 80%; margin: 20px auto; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; }
+    .actions a { margin-right: 10px; }
+    .search-form { margin: 20px auto; width: 80%; padding: 10px; border: 1px solid #eee; }
+    .search-form input, .search-form select { margin-right: 10px; padding: 5px; }
+  </style>
+</head>
+<body>
+<h1>学生信息管理</h1>
+
+<div class="search-form">
+  <form th:action="@{/students}" method="get">
+    学号: <input type="text" name="studentNumber" th:value="${searchParams != null ? searchParams.studentNumber : ''}" />
+    姓名: <input type="text" name="name" th:value="${searchParams != null ? searchParams.name : ''}" />
+    性别:
+    <select name="gender">
+      <option value="">全部</option>
+      <option value="男" th:selected="${searchParams != null and searchParams.gender == '男'}">男</option>
+      <option value="女" th:selected="${searchParams != null and searchParams.gender == '女'}">女</option>
+    </select>
+    专业: <input type="text" name="major" th:value="${searchParams != null ? searchParams.major : ''}" />
+    班级: <input type="text" name="className" th:value="${searchParams != null ? searchParams.className : ''}" />
+    <button type="submit">查询</button>
+    <a th:href="@{/students}">清空查询</a>
+  </form>
+</div>
+
+<p><a th:href="@{/students/add}">添加新学生</a></p>
+
+<table>
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>学号</th>
+    <th>姓名</th>
+    <th>性别</th>
+    <th>年龄</th>
+    <th>专业</th>
+    <th>班级</th>
+    <th>入学日期</th>
+    <th>联系方式</th>
+    <th>操作</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="student : ${students}">
+    <td th:text="${student.id}"></td>
+    <td th:text="${student.studentNumber}"></td>
+    <td th:text="${student.name}"></td>
+    <td th:text="${student.gender}"></td>
+    <td th:text="${student.age}"></td>
+    <td th:text="${student.major}"></td>
+    <td th:text="${student.className}"></td>
+    <td th:text="${student.enrollmentDate != null ? #temporals.format(student.enrollmentDate, 'yyyy-MM-dd') : ''}"></td>
+    <td th:text="${student.contactInfo}"></td>
+    <td class="actions">
+      <a th:href="@{/students/edit/{id}(id=${student.id})}">编辑</a>
+      <a th:href="@{/students/delete/{id}(id=${student.id})}" onclick="return confirm('确定要删除吗?');">删除</a>
+    </td>
+  </tr>
+  <tr th:if="${students == null or students.isEmpty()}">
+    <td colspan="10" style="text-align: center;">暂无学生数据</td>
+  </tr>
+  </tbody>
+</table>
+
+<!-- 分页导航 (如果实现了分页) -->
+<!--
+<div th:if="${totalPages != null and totalPages > 1}" style="text-align: center; margin-top: 20px;">
+    <span th:each="i : ${#numbers.sequence(1, totalPages)}">
+        <a th:href="@{/students(pageNum=${i}, studentNumber=${searchParams.studentNumber}, name=${searchParams.name}, gender=${searchParams.gender}, major=${searchParams.major}, className=${searchParams.className})}"
+           th:text="${i}"
+           th:style="${i == currentPage ? 'font-weight:bold;' : ''}"></a>
+    </span>
+</div>
+-->
+</body>
+</html>

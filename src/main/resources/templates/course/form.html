@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${course.id == null ? '添加课程' : '编辑课程'}"></title>
+    <style>
+        /* 与 student/form.html 类似的样式 */
+        form { width: 50%; margin: 20px auto; padding: 20px; border: 1px solid #ccc; }
+        label { display: inline-block; width: 100px; margin-bottom: 10px; }
+        input[type=text], input[type=number], textarea { width: 250px; padding: 5px; margin-bottom: 10px; }
+        textarea { height: 80px; }
+        button { padding: 8px 15px; }
+    </style>
+</head>
+<body>
+<h1 th:text="${course.id == null ? '添加新课程' : '编辑课程信息'}"></h1>
+
+<form th:action="${course.id == null ? '/courses/add' : '/courses/edit/' + course.id}"
+      th:object="${course}" method="post">
+    <input type="hidden" th:field="*{id}" />
+    <div>
+        <label for="courseNumber">课程编号:</label>
+        <input type="text" id="courseNumber" th:field="*{courseNumber}" required />
+        <span th:if="${#fields.hasErrors('courseNumber')}" th:errors="*{courseNumber}" style="color:red;"></span>
+    </div>
+    <div>
+        <label for="name">课程名称:</label>
+        <input type="text" id="name" th:field="*{name}" required />
+        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color:red;"></span>
+    </div>
+    <div>
+        <label for="credits">学分:</label>
+        <input type="number" id="credits" th:field="*{credits}" step="0.1" />
+        <span th:if="${#fields.hasErrors('credits')}" th:errors="*{credits}" style="color:red;"></span>
+    </div>
+    <div>
+        <label for="teacherName">授课教师:</label>
+        <input type="text" id="teacherName" th:field="*{teacherName}" />
+    </div>
+    <div>
+        <label for="departmentOffering">开课院系:</label>
+        <input type="text" id="departmentOffering" th:field="*{departmentOffering}" />
+    </div>
+    <div>
+        <label for="description">课程描述:</label>
+        <textarea id="description" th:field="*{description}"></textarea>
+    </div>
+    <div>
+        <button type="submit" th:text="${course.id == null ? '添加' : '更新'}"></button>
+        <a th:href="@{/courses}">取消</a>
+    </div>
+</form>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.ntu.ai.course_hk.mapper.StudentMapper">
+
+    <resultMap id="StudentResultMap" type="edu.ntu.ai.course_hk.entity.Student">
+        <id property="id" column="id"/>
+        <result property="studentNumber" column="student_number"/>
+        <result property="name" column="name"/>
+        <result property="gender" column="gender"/>
+        <result property="age" column="age"/>
+        <result property="major" column="major"/>
+        <result property="className" column="class_name"/>
+        <result property="enrollmentDate" column="enrollment_date"/>
+        <result property="contactInfo" column="contact_info"/>
+    </resultMap>
+
+    <select id="findById" resultMap="StudentResultMap">
+        SELECT * FROM student WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="StudentResultMap">
+        SELECT * FROM student ORDER BY id ASC
+    </select>
+
+    <insert id="insert" parameterType="edu.ntu.ai.course_hk.entity.Student" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO student (student_number, name, gender, age, major, class_name, enrollment_date, contact_info)
+        VALUES (#{studentNumber}, #{name}, #{gender}, #{age}, #{major}, #{className}, #{enrollmentDate}, #{contactInfo})
+    </insert>
+
+    <update id="update" parameterType="edu.ntu.ai.course_hk.entity.Student">
+        UPDATE student
+        <set>
+            <if test="studentNumber != null">student_number = #{studentNumber},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="major != null">major = #{major},</if>
+            <if test="className != null">class_name = #{className},</if>
+            <if test="enrollmentDate != null">enrollment_date = #{enrollmentDate},</if>
+            <if test="contactInfo != null">contact_info = #{contactInfo},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM student WHERE id = #{id}
+    </delete>
+
+    <!-- 多条件查询 (动态SQL) -->
+    <select id="findByConditions" parameterType="map" resultMap="StudentResultMap">
+        SELECT * FROM student
+        <where>
+            <if test="studentNumber != null and studentNumber != ''">
+                AND student_number LIKE CONCAT('%', #{studentNumber}, '%')
+            </if>
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="gender != null and gender != ''">
+                AND gender = #{gender}
+            </if>
+            <if test="major != null and major != ''">
+                AND major LIKE CONCAT('%', #{major}, '%')
+            </if>
+            <if test="className != null and className != ''">
+                AND class_name LIKE CONCAT('%', #{className}, '%')
+            </if>
+            <!-- 可以添加更多条件，比如年龄范围、入学日期范围等 -->
+        </where>
+        <!-- 可以添加分页参数，例如 LIMIT #{offset}, #{pageSize} -->
+        ORDER BY id ASC
+    </select>
+
+    <!-- 多条件查询的总数统计 -->
+    <select id="countByConditions" parameterType="map" resultType="long">
+        SELECT count(*) FROM student
+        <where>
+            <if test="studentNumber != null and studentNumber != ''">
+                AND student_number LIKE CONCAT('%', #{studentNumber}, '%')
+            </if>
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="gender != null and gender != ''">
+                AND gender = #{gender}
+            </if>
+            <if test="major != null and major != ''">
+                AND major LIKE CONCAT('%', #{major}, '%')
+            </if>
+            <if test="className != null and className != ''">
+                AND class_name LIKE CONCAT('%', #{className}, '%')
+            </if>
+        </where>
+    </select>
+
+</mapper>

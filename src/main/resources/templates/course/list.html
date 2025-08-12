@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>课程列表</title>
+  <style>
+    /* 与 student/list.html 类似的样式 */
+    table { border-collapse: collapse; width: 90%; margin: 20px auto; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; }
+    .actions a { margin-right: 10px; }
+    .search-form { margin: 20px auto; width: 90%; padding: 10px; border: 1px solid #eee; }
+    .search-form input, .search-form select { margin-right: 10px; padding: 5px; }
+  </style>
+</head>
+<body>
+<h1>课程信息管理</h1>
+
+<div class="search-form">
+  <form th:action="@{/courses}" method="get">
+    课程编号: <input type="text" name="courseNumber" th:value="${searchParams != null ? searchParams.courseNumber : ''}" />
+    课程名称: <input type="text" name="name" th:value="${searchParams != null ? searchParams.name : ''}" />
+    授课教师: <input type="text" name="teacherName" th:value="${searchParams != null ? searchParams.teacherName : ''}" />
+    开课院系: <input type="text" name="departmentOffering" th:value="${searchParams != null ? searchParams.departmentOffering : ''}" />
+    <button type="submit">查询</button>
+    <a th:href="@{/courses}">清空查询</a>
+  </form>
+</div>
+
+<p><a th:href="@{/courses/add}">添加新课程</a></p>
+
+<table>
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>课程编号</th>
+    <th>课程名称</th>
+    <th>学分</th>
+    <th>授课教师</th>
+    <th>开课院系</th>
+    <th>描述</th>
+    <th>操作</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="course : ${courses}">
+    <td th:text="${course.id}"></td>
+    <td th:text="${course.courseNumber}"></td>
+    <td th:text="${course.name}"></td>
+    <td th:text="${course.credits}"></td>
+    <td th:text="${course.teacherName}"></td>
+    <td th:text="${course.departmentOffering}"></td>
+    <td th:text="${course.description}"></td>
+    <td class="actions">
+      <a th:href="@{/courses/edit/{id}(id=${course.id})}">编辑</a>
+      <a th:href="@{/courses/delete/{id}(id=${course.id})}" onclick="return confirm('确定要删除这门课程吗?');">删除</a>
+    </td>
+  </tr>
+  <tr th:if="${courses == null or courses.isEmpty()}">
+    <td colspan="8" style="text-align: center;">暂无课程数据</td>
+  </tr>
+  </tbody>
+</table>
+</body>
+</html>

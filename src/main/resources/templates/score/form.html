@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${score.id == null ? '录入成绩' : '修改成绩'}"></title>
+    <style> /* 与其他form页面类似的样式 */ </style>
+</head>
+<body>
+<h1 th:text="${score.id == null ? '录入新成绩' : '修改成绩信息'}"></h1>
+
+<div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+<form th:action="@{/scores/manage}" th:object="${score}" method="post">
+    <input type="hidden" th:field="*{id}" /> <!-- 用于更新时传递成绩记录ID -->
+
+    <div>
+        <label for="studentId">学生:</label>
+        <select id="studentId" th:field="*{studentId}" required
+                th:disabled="${score.id != null}"> <!-- 如果是编辑模式，通常不允许修改学生和课程 -->
+            <option value="">-- 选择学生 --</option>
+            <option th:each="s : ${students}" th:value="${s.id}" th:text="${s.name + ' (' + s.studentNumber + ')'}"></option>
+        </select>
+        <span th:if="${#fields.hasErrors('studentId')}" th:errors="*{studentId}" style="color:red;"></span>
+    </div>
+
+    <div>
+        <label for="courseId">课程:</label>
+        <select id="courseId" th:field="*{courseId}" required
+                th:disabled="${score.id != null}"> <!-- 如果是编辑模式，通常不允许修改学生和课程 -->
+            <option value="">-- 选择课程 --</option>
+            <option th:each="c : ${courses}" th:value="${c.id}" th:text="${c.name + ' (' + c.courseNumber + ')'}"></option>
+        </select>
+        <span th:if="${#fields.hasErrors('courseId')}" th:errors="*{courseId}" style="color:red;"></span>
+    </div>
+
+    <div>
+        <label for="grade">成绩:</label>
+        <input type="number" id="grade" th:field="*{grade}" step="0.01" min="0" max="100" />
+        <span th:if="${#fields.hasErrors('grade')}" th:errors="*{grade}" style="color:red;"></span>
+    </div>
+
+    <div>
+        <label for="semester">学期:</label>
+        <input type="text" id="semester" th:field="*{semester}" />
+        <span th:if="${#fields.hasErrors('semester')}" th:errors="*{semester}" style="color:red;"></span>
+    </div>
+
+    <div>
+        <label for="examDate">考试日期:</label>
+        <input type="date" id="examDate" th:field="*{examDate}" />
+        <span th:if="${#fields.hasErrors('examDate')}" th:errors="*{examDate}" style="color:red;"></span>
+    </div>
+
+    <div>
+        <button type="submit" th:text="${score.id == null ? '录入' : '更新'}"></button>
+        <a th:href="@{/scores}">取消</a>
+    </div>
+</form>
+</body>
+</html>

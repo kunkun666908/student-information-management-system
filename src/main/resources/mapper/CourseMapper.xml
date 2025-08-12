@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.ntu.ai.course_hk.mapper.CourseMapper">
+
+    <resultMap id="CourseResultMap" type="edu.ntu.ai.course_hk.entity.Course">
+        <id property="id" column="id"/>
+        <result property="courseNumber" column="course_number"/>
+        <result property="name" column="name"/>
+        <result property="credits" column="credits"/>
+        <result property="teacherName" column="teacher_name"/>
+        <result property="departmentOffering" column="department_offering"/>
+        <result property="description" column="description"/>
+    </resultMap>
+
+    <select id="findById" resultMap="CourseResultMap">
+        SELECT * FROM course WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="CourseResultMap">
+        SELECT * FROM course ORDER BY id ASC
+    </select>
+
+    <insert id="insert" parameterType="edu.ntu.ai.course_hk.entity.Course" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO course (course_number, name, credits, teacher_name, department_offering, description)
+        VALUES (#{courseNumber}, #{name}, #{credits}, #{teacherName}, #{departmentOffering}, #{description})
+    </insert>
+
+    <update id="update" parameterType="edu.ntu.ai.course_hk.entity.Course">
+        UPDATE course
+        <set>
+            <if test="courseNumber != null">course_number = #{courseNumber},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="credits != null">credits = #{credits},</if>
+            <if test="teacherName != null">teacher_name = #{teacherName},</if>
+            <if test="departmentOffering != null">department_offering = #{departmentOffering},</if>
+            <if test="description != null">description = #{description},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM course WHERE id = #{id}
+    </delete>
+
+    <!-- 多条件查询 (动态SQL) -->
+    <select id="findByConditions" parameterType="map" resultMap="CourseResultMap">
+        SELECT * FROM course
+        <where>
+            <if test="courseNumber != null and courseNumber != ''">
+                AND course_number LIKE CONCAT('%', #{courseNumber}, '%')
+            </if>
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="teacherName != null and teacherName != ''">
+                AND teacher_name LIKE CONCAT('%', #{teacherName}, '%')
+            </if>
+            <if test="departmentOffering != null and departmentOffering != ''">
+                AND department_offering LIKE CONCAT('%', #{departmentOffering}, '%')
+            </if>
+            <!-- 可以添加更多条件，例如学分范围 -->
+        </where>
+        ORDER BY id ASC
+        <!-- (可选) 分页: LIMIT #{offset}, #{pageSize} -->
+    </select>
+
+    <!-- 多条件查询的总数统计 -->
+    <select id="countByConditions" parameterType="map" resultType="long">
+        SELECT count(*) FROM course
+        <where>
+            <if test="courseNumber != null and courseNumber != ''">
+                AND course_number LIKE CONCAT('%', #{courseNumber}, '%')
+            </if>
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="teacherName != null and teacherName != ''">
+                AND teacher_name LIKE CONCAT('%', #{teacherName}, '%')
+            </if>
+            <if test="departmentOffering != null and departmentOffering != ''">
+                AND department_offering LIKE CONCAT('%', #{departmentOffering}, '%')
+            </if>
+        </where>
+    </select>
+
+</mapper>
